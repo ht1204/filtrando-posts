@@ -1,24 +1,66 @@
 import React, { Component } from 'react';
 import posts from './posts'
 
-
-// Modifica el componente App para implmentar la funcionalidad requerida
-
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      inputSearch: '',
+    }
+
+    this.handleInputSearch = this.handleInputSearch.bind(this);
+  }
+
+  handleInputSearch(event) {
+    this.setState({
+      inputSearch: event.target.value,
+    });
+  }
+
+  filterPosts() {
+
+    if(this.state.inputSearch.trim() === "")
+      return posts;
+
+    const filteredPosts = posts.filter((post) => {
+      return post.title.toLowerCase().includes(this.state.inputSearch.toLowerCase());
+    });
+
+    return filteredPosts;
+
+  }
+
+
   render() {
+
+    const searchedPosts = this.filterPosts();
+
     return (
       <div>
         <div className="filter">
-          <input type="text" placeholder="Ingresa el término de búsqueda" />
+          <input
+            type="text"
+            placeholder="Ingresa el término de búsqueda"
+            value={this.state.inputSearch}
+            onChange={this.handleInputSearch}
+          />
         </div>
         <ul>
-          <li>
-            <a href={posts[0].url}><img src={posts[0].image } /></a>
-            <p>{ posts[0].title }</p>
-          </li>
+          {searchedPosts.map((post, index) => {
+            return (
+              <li key={index}>
+                <a href={post.url} target='_blank'>
+                  <img src={post.image} alt={post.title} />
+                </a>
+                <p>{post.title}</p>
+              </li>
+            );
+          })}
         </ul>
       </div>
-    )
+    );
   }
 }
 
